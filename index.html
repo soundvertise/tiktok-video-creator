@@ -21,53 +21,36 @@
             color: #ffffff;
             font-family: 'Inter', sans-serif;
             min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             overflow-x: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .app-container {
-            width: 100%;
-            max-width: 1200px;
-            display: flex;
-            flex-direction: row;
-            gap: 4rem;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem;
-        }
-
-        @media (max-width: 1024px) {
-            .app-container {
-                flex-direction: column;
-                gap: 2rem;
-            }
         }
 
         .iphone-frame {
-            width: 320px;
+            width: 290px;
             aspect-ratio: 9 / 16;
-            border: 12px solid #1A1A1A;
-            border-radius: 48px;
+            border: 10px solid #1A1A1A;
+            border-radius: 42px;
             position: relative;
             background: #000;
             overflow: hidden;
-            box-shadow: 0 0 0 2px #222, 0 30px 60px rgba(0, 0, 0, 0.8);
-            flex-shrink: 0;
+            box-shadow: 0 0 0 2px #000, 0 20px 50px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
         }
 
         .notch {
             position: absolute;
-            top: 0;
+            top: 12px;
             left: 50%;
             transform: translateX(-50%);
-            width: 120px;
-            height: 28px;
-            background: #1A1A1A;
-            border-bottom-left-radius: 18px;
-            border-bottom-right-radius: 18px;
+            width: 75px;
+            height: 22px;
+            background: #000;
+            border-radius: 20px;
             z-index: 50;
+            border: 1px solid #222;
         }
 
         .video-container {
@@ -93,6 +76,7 @@
             max-width: 85%;
             word-wrap: break-word;
             z-index: 30;
+            display: block;
             line-height: 1.1;
             left: 50%;
             transform: translateX(-50%);
@@ -104,7 +88,8 @@
                 -2px -2px 0 var(--outline-color),  
                  2px -2px 0 var(--outline-color),
                 -2px  2px 0 var(--outline-color),
-                 2px  2px 0 var(--outline-color);
+                 2px  2px 0 var(--outline-color),
+                 0px 4px 12px rgba(0,0,0,0.5);
         }
 
         .tiktok-ui-overlay {
@@ -112,34 +97,35 @@
             inset: 0;
             pointer-events: none;
             z-index: 40;
-            background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 20%, transparent 80%, rgba(0,0,0,0.2) 100%);
+            display: block;
+            background: linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 20%, transparent 80%, rgba(0,0,0,0.2) 100%);
         }
 
         .right-actions {
             position: absolute;
-            right: 10px;
-            bottom: 100px;
+            right: 8px;
+            bottom: 85px;
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 12px;
             align-items: center;
         }
 
-        .action-text { font-size: 10px; font-weight: 600; margin-top: 2px; }
+        .action-text { font-size: 8px; font-weight: 600; }
 
         .bottom-info {
             position: absolute;
-            left: 15px;
-            bottom: 25px;
-            max-width: 200px;
+            left: 12px;
+            bottom: 20px;
+            max-width: 190px;
         }
 
         .waveform-wrapper {
             position: relative;
             width: 100%;
-            height: 80px;
+            height: 90px;
             background: #000;
-            border-radius: 12px;
+            border-radius: 16px;
             overflow: hidden;
             border: 1px solid #222;
             cursor: pointer;
@@ -151,40 +137,42 @@
             position: absolute;
             top: 0;
             height: 100%;
-            background: rgba(59, 130, 246, 0.2);
+            background: rgba(59, 130, 246, 0.15);
             border-left: 2px solid var(--sv-blue);
             border-right: 2px solid var(--sv-blue);
             pointer-events: none;
+            z-index: 5;
         }
 
         #playhead {
             position: absolute;
             top: 0;
+            left: 0;
             width: 2px;
             height: 100%;
             background: #fff;
             pointer-events: none;
             z-index: 10;
+            box-shadow: 0 0 10px rgba(255,255,255,0.8);
         }
 
         .btn-sv {
             background: linear-gradient(135deg, var(--sv-blue) 0%, var(--sv-purple) 100%);
-            transition: transform 0.2s, filter 0.2s;
+            transition: all 0.3s ease;
         }
-        .btn-sv:hover { filter: brightness(1.1); transform: translateY(-2px); }
-        .btn-sv:active { transform: translateY(0); }
+        .btn-sv:hover { filter: brightness(1.1); transform: scale(1.02); }
 
-        .font-tiktok { font-family: 'Montserrat', sans-serif; font-weight: 900; text-transform: uppercase; }
+        .font-tiktok { font-family: 'Montserrat', sans-serif; font-weight: 900; text-transform: uppercase; letter-spacing: -1px; }
         .font-typewriter { font-family: 'Courier Prime', monospace; }
         .font-classic { font-family: 'Inter', sans-serif; font-weight: 800; }
         .font-handwriting { font-family: 'Dancing Script', cursive; font-weight: 700; }
 
         .font-btn {
-            background: #111;
-            border: 1px solid #222;
-            padding: 10px;
-            border-radius: 12px;
-            font-size: 11px;
+            background: #000;
+            border: 1px solid #333;
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-size: 10px;
             transition: all 0.2s;
         }
         .font-btn.active {
@@ -194,43 +182,51 @@
         }
 
         .color-wrapper {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
+            position: relative;
+            width: 44px;
+            height: 44px;
+            border-radius: 999px;
             border: 2px solid #333;
             overflow: hidden;
-            position: relative;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             transition: border-color 0.2s;
         }
-        .color-wrapper:hover { border-color: #555; }
+        .color-wrapper:hover { border-color: var(--sv-blue); }
+        
         .color-input {
             position: absolute;
-            top: -50%; left: -50%; width: 200%; height: 200%;
+            width: 150%;
+            height: 150%;
             cursor: pointer;
+            border: none;
+            padding: 0;
+            background: none;
+            transform: scale(1.5);
         }
 
-        input[type="range"] {
-            -webkit-appearance: none;
-            background: #222;
-            height: 4px;
-            border-radius: 2px;
-        }
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
-            width: 16px; height: 16px;
+            height: 18px;
+            width: 18px;
+            border-radius: 50%;
             background: #fff;
             border: 2px solid var(--sv-blue);
-            border-radius: 50%;
             cursor: pointer;
         }
     </style>
 </head>
-<body>
+<body class="p-4">
 
-    <div class="app-container">
-        <div class="flex flex-col items-center gap-6">
+    <div class="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+        
+        <!-- Preview Mockup -->
+        <div class="flex flex-col items-center justify-center space-y-4 sticky top-4">
             <div class="iphone-frame" id="iphone">
                 <div class="notch"></div>
+                
                 <div class="video-container" id="drop-zone">
                     <video id="main-video" loop crossorigin="anonymous" playsinline></video>
                     
@@ -240,147 +236,155 @@
 
                     <div id="safe-guide" class="tiktok-ui-overlay">
                         <div class="right-actions">
-                            <div class="w-10 h-10 rounded-full border-2 border-white bg-zinc-800 overflow-hidden">
-                                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=SV" alt="avatar">
+                            <div class="action-item flex flex-col items-center">
+                                <div class="w-9 h-9 rounded-full border border-white bg-zinc-800 mb-1 overflow-hidden">
+                                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=SV" alt="avatar">
+                                </div>
                             </div>
-                            <div class="flex flex-col items-center">
+                            <div class="action-item flex flex-col items-center">
                                 <i data-lucide="heart" class="text-white fill-white w-7 h-7"></i>
-                                <span class="action-text">580K</span>
+                                <span class="action-text text-white">580K</span>
                             </div>
-                            <div class="flex flex-col items-center">
+                            <div class="action-item flex flex-col items-center">
                                 <i data-lucide="message-circle" class="text-white fill-white w-7 h-7"></i>
-                                <span class="action-text">2.4K</span>
+                                <span class="action-text text-white">2.4K</span>
                             </div>
-                            <div class="flex flex-col items-center">
+                            <div class="action-item flex flex-col items-center">
                                 <i data-lucide="share-2" class="text-white fill-white w-7 h-7"></i>
-                                <span class="action-text">Share</span>
+                                <span class="action-text text-white">Condividi</span>
                             </div>
                         </div>
-                        <div class="bottom-info">
-                            <p class="font-bold text-xs">@soundvertise.studio</p>
-                            <p class="text-[11px] opacity-90">Crea contenuti virali in pochi secondi. #creators #music</p>
+                        <div class="bottom-info space-y-0.5">
+                            <p class="font-bold text-[11px]">@soundvertise.co</p>
+                            <p class="text-[10px] opacity-90 leading-tight">Il tool definitivo per musicisti e creator. #soundvertise</p>
+                            <div class="flex items-center gap-1.5 pt-1">
+                                <i data-lucide="music" class="w-3 h-3 text-blue-400"></i>
+                                <marquee class="text-[9px] w-28 text-white">Suono originale - TikTok Creator</marquee>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
             
-            <button id="toggle-guide" class="px-6 py-2 bg-zinc-900 rounded-full text-[10px] font-bold uppercase border border-zinc-800 hover:border-blue-500 transition-all">
-               Nascondi/Mostra Overlay Social
+            <button id="toggle-guide" class="px-5 py-1.5 bg-zinc-900 rounded-full text-[9px] font-black uppercase border border-zinc-800 hover:border-blue-500 transition-all">
+               Attiva/Disattiva Interfaccia Social
             </button>
         </div>
 
-        <div class="flex-1 max-w-[500px] space-y-6">
-            <div class="bg-zinc-900/50 border border-zinc-800 p-8 rounded-[2.5rem] backdrop-blur-md shadow-2xl">
-                <header class="flex justify-between items-center mb-8">
-                    <div>
-                        <h1 class="text-2xl font-black italic uppercase tracking-tighter">
-                            Video <span class="text-blue-500">Editor</span>
-                        </h1>
-                        <p class="text-[10px] text-zinc-500 font-bold tracking-[0.2em]">BY SOUNDVERTISE</p>
-                    </div>
-                    <div id="audio-time" class="text-xs font-mono text-blue-400 font-bold">00:00 / 00:00</div>
-                </header>
+        <!-- Controls -->
+        <div class="bg-zinc-900/40 border border-zinc-800 p-6 md:p-8 rounded-[2.5rem] space-y-6 backdrop-blur-xl">
+            <header class="flex justify-between items-end border-b border-zinc-800/50 pb-4">
+                <div>
+                    <h1 class="text-xl font-black italic uppercase">
+                        Studio <span class="text-blue-400">Creator</span>
+                    </h1>
+                    <p class="text-[9px] font-bold tracking-widest text-zinc-600">SOUNDVERTISE</p>
+                </div>
+                <div class="text-right">
+                    <span id="audio-time" class="text-blue-400 font-mono text-xs font-bold">0:00 / 0:00</span>
+                </div>
+            </header>
 
-                <div class="grid grid-cols-2 gap-4 mb-6">
-                    <div class="space-y-2">
-                        <label class="text-[10px] font-black text-zinc-500 uppercase">Video</label>
-                        <label for="video-input" class="flex flex-col items-center justify-center bg-black border border-zinc-800 h-24 rounded-2xl cursor-pointer hover:border-blue-500 transition-colors">
-                            <i data-lucide="video" class="w-6 h-6 text-blue-500 mb-2"></i>
-                            <span class="text-[10px] text-zinc-400 px-2 text-center truncate w-full" id="video-label">Seleziona Video</span>
-                            <input type="file" id="video-input" accept="video/*" class="hidden">
-                        </label>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="space-y-1">
+                    <label class="text-[9px] font-black uppercase text-zinc-500">Input Video</label>
+                    <label for="video-input" class="flex items-center gap-3 bg-black border border-zinc-800 p-3 rounded-xl cursor-pointer hover:border-blue-500 transition-all">
+                        <i data-lucide="clapperboard" class="w-4 h-4 text-blue-400"></i>
+                        <span class="text-[11px] text-zinc-400 truncate" id="video-label">Carica Video</span>
+                        <input type="file" id="video-input" accept="video/*" class="hidden">
+                    </label>
+                </div>
+                <div class="space-y-1">
+                    <label class="text-[9px] font-black uppercase text-zinc-500">Input Audio</label>
+                    <label for="audio-input" class="flex items-center gap-3 bg-black border border-zinc-800 p-3 rounded-xl cursor-pointer hover:border-violet-500 transition-all">
+                        <i data-lucide="mic-2" class="w-4 h-4 text-violet-400"></i>
+                        <span class="text-[11px] text-zinc-400 truncate" id="audio-label">Carica Audio</span>
+                        <input type="file" id="audio-input" accept="audio/*" class="hidden">
+                    </label>
+                </div>
+            </div>
+
+            <div class="space-y-4 bg-black p-5 rounded-3xl border border-zinc-800/50 shadow-inner">
+                <div class="flex items-center gap-4">
+                    <button id="play-btn" class="w-12 h-12 rounded-xl btn-sv text-white flex items-center justify-center shadow-lg">
+                        <i data-lucide="play" id="play-icon" class="w-5 h-5 fill-white"></i>
+                    </button>
+                    <div class="flex-1 space-y-3">
+                        <div class="waveform-wrapper" id="waveform-container">
+                            <canvas id="waveform"></canvas>
+                            <div id="audio-range-highlighter"></div>
+                            <div id="playhead"></div>
+                        </div>
+                        <div class="flex justify-between items-center text-[9px] font-black uppercase">
+                            <span id="sync-label" class="text-zinc-500">Inizio: 0.0s</span>
+                            <span class="text-blue-400 text-xs">Trascina l'onda sonora</span>
+                        </div>
+                        <input type="range" id="audio-slider" class="w-full accent-blue-500 h-1 bg-zinc-800 rounded-lg" min="0" value="0" step="0.01">
                     </div>
-                    <div class="space-y-2">
-                        <label class="text-[10px] font-black text-zinc-500 uppercase">Audio</label>
-                        <label for="audio-input" class="flex flex-col items-center justify-center bg-black border border-zinc-800 h-24 rounded-2xl cursor-pointer hover:border-purple-500 transition-colors">
-                            <i data-lucide="music" class="w-6 h-6 text-purple-500 mb-2"></i>
-                            <span class="text-[10px] text-zinc-400 px-2 text-center truncate w-full" id="audio-label">Seleziona Audio</span>
-                            <input type="file" id="audio-input" accept="audio/*" class="hidden">
-                        </label>
+                </div>
+            </div>
+
+            <div class="p-5 bg-zinc-900/60 rounded-3xl border border-zinc-800 space-y-6">
+                <div class="space-y-1">
+                    <label class="text-[9px] font-black uppercase text-zinc-500">Contenuto Testo</label>
+                    <textarea id="caption-input" rows="2" placeholder="Testo del video..." class="w-full bg-black border border-zinc-800 rounded-xl p-3 text-sm focus:ring-1 focus:ring-blue-500 outline-none resize-none font-semibold"></textarea>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-[9px] font-black uppercase text-zinc-500">Stile Font</label>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                        <button class="font-btn active" data-font="font-tiktok">TIKTOK</button>
+                        <button class="font-btn" data-font="font-typewriter">RETRO</button>
+                        <button class="font-btn" data-font="font-classic">BOLD</button>
+                        <button class="font-btn" data-font="font-handwriting">SCRIPT</button>
                     </div>
                 </div>
 
-                <div class="bg-black p-4 rounded-3xl border border-zinc-800 mb-6">
-                    <div class="flex items-center gap-4">
-                        <button id="play-btn" class="w-12 h-12 rounded-2xl btn-sv flex items-center justify-center shrink-0">
-                            <i data-lucide="play" id="play-icon" class="w-5 h-5 fill-white text-white"></i>
-                        </button>
-                        <div class="flex-1 space-y-3">
-                            <div class="waveform-wrapper" id="waveform-container">
-                                <canvas id="waveform"></canvas>
-                                <div id="audio-range-highlighter"></div>
-                                <div id="playhead"></div>
+                <div class="flex items-end justify-between gap-6">
+                    <div class="flex-1 space-y-3">
+                        <div class="flex justify-between items-center">
+                            <label class="text-[9px] font-black uppercase text-zinc-500">Dimensione Testo</label>
+                            <span id="font-size-val" class="text-[10px] text-blue-400 font-mono">24px</span>
+                        </div>
+                        <input type="range" id="font-size" min="12" max="52" value="24" class="w-full accent-blue-500">
+                    </div>
+                    
+                    <div class="flex gap-4 items-center">
+                        <div class="flex flex-col items-center gap-1.5">
+                            <label class="text-[8px] font-black uppercase text-zinc-500">Colore</label>
+                            <div class="color-wrapper">
+                                <input type="color" id="text-color" value="#ffffff" class="color-input">
                             </div>
-                            <div class="flex justify-between text-[10px] font-bold text-zinc-500">
-                                <span id="sync-label">Start: 0.0s</span>
-                                <span>Timeline Audio</span>
+                        </div>
+                        <div class="flex flex-col items-center gap-1.5">
+                            <label class="text-[8px] font-black uppercase text-zinc-500">Bordo</label>
+                            <div class="color-wrapper">
+                                <input type="color" id="outline-color-picker" value="#000000" class="color-input">
                             </div>
                         </div>
                     </div>
-                    <input type="range" id="audio-slider" class="w-full mt-4 accent-blue-500" min="0" value="0" step="0.01">
                 </div>
 
-                <div class="space-y-6">
-                    <div class="space-y-2">
-                        <label class="text-[10px] font-black text-zinc-500 uppercase">Testo</label>
-                        <textarea id="caption-input" rows="2" placeholder="Inserisci il tuo testo qui..." class="w-full bg-black border border-zinc-800 rounded-2xl p-4 text-sm focus:border-blue-500 outline-none resize-none"></textarea>
-                    </div>
-
-                    <div class="space-y-2">
-                        <label class="text-[10px] font-black text-zinc-500 uppercase">Font</label>
-                        <div class="grid grid-cols-4 gap-2">
-                            <button class="font-btn active" data-font="font-tiktok">TIKTOK</button>
-                            <button class="font-btn" data-font="font-typewriter">RETRO</button>
-                            <button class="font-btn" data-font="font-classic">BOLD</button>
-                            <button class="font-btn" data-font="font-handwriting">SCRIPT</button>
-                        </div>
-                    </div>
-
-                    <div class="flex items-center gap-6">
-                        <div class="flex-1 space-y-3">
-                            <div class="flex justify-between items-center">
-                                <label class="text-[10px] font-black text-zinc-500 uppercase">Dimensione</label>
-                                <span id="font-size-val" class="text-xs text-blue-500 font-mono font-bold">24px</span>
-                            </div>
-                            <input type="range" id="font-size" min="12" max="52" value="24" class="w-full accent-blue-500">
-                        </div>
-                        
-                        <div class="flex gap-3">
-                            <div class="flex flex-col items-center gap-1">
-                                <label class="text-[8px] font-bold text-zinc-500">Colore</label>
-                                <div class="color-wrapper"><input type="color" id="text-color" value="#ffffff" class="color-input"></div>
-                            </div>
-                            <div class="flex flex-col items-center gap-1">
-                                <label class="text-[8px] font-bold text-zinc-500">Bordo</label>
-                                <div class="color-wrapper"><input type="color" id="outline-color-picker" value="#000000" class="color-input"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="flex items-center justify-between bg-zinc-800/30 p-4 rounded-2xl border border-zinc-800/50">
-                        <div class="flex items-center gap-3">
-                            <button id="toggle-bold" class="w-10 h-5 rounded-full bg-zinc-700 relative">
-                                <div class="dot absolute left-1 top-0.5 bg-white w-4 h-4 rounded-full transition-all" id="bold-dot"></div>
-                            </button>
-                            <span class="text-[10px] font-black text-zinc-400 uppercase">Testo con Outline</span>
-                        </div>
-                        <span class="text-[9px] text-zinc-600 font-bold uppercase italic">Trascina il testo sulla preview</span>
-                    </div>
-
-                    <div class="pt-4">
-                        <button id="export-btn" class="w-full btn-sv text-white font-black py-5 rounded-2xl flex items-center justify-center gap-3 uppercase tracking-widest text-xs shadow-lg">
-                            <i data-lucide="download" class="w-4 h-4"></i> Esporta MP4
+                <div class="flex items-center justify-between pt-2">
+                    <div class="flex items-center gap-3">
+                        <button id="toggle-bold" class="w-10 h-5 rounded-full bg-zinc-700 relative">
+                            <div class="dot absolute left-1 top-0.5 bg-white w-4 h-4 rounded-full transition-all translate-x-0" id="bold-dot"></div>
                         </button>
-                        <div id="export-status" class="hidden mt-4 bg-black border border-zinc-800 p-4 rounded-2xl">
-                            <div class="flex justify-between text-[10px] mb-2 font-black uppercase text-blue-500">
-                                <span id="status-text">Generazione in corso...</span>
-                                <span id="percent-text">0%</span>
-                            </div>
-                            <div class="w-full bg-zinc-900 rounded-full h-1.5 overflow-hidden">
-                                <div id="progress-bar" class="bg-blue-500 h-full w-0 transition-all duration-300"></div>
-                            </div>
-                        </div>
+                        <span class="text-[9px] font-black text-zinc-500 uppercase">Attiva Outline</span>
                     </div>
+                </div>
+            </div>
+
+            <button id="export-btn" class="w-full btn-sv text-white font-black py-4 rounded-2xl flex items-center justify-center gap-2 uppercase tracking-widest text-[10px] shadow-xl">
+                <i data-lucide="sparkles" class="w-4 h-4"></i> Esporta Video MP4
+            </button>
+            <div id="export-status" class="hidden bg-black border border-zinc-800 p-4 rounded-2xl">
+                <div class="flex justify-between text-[9px] mb-2 font-black uppercase text-blue-400">
+                    <span id="status-text">Inizializzazione...</span>
+                    <span id="percent-text">0%</span>
+                </div>
+                <div class="w-full bg-zinc-900 rounded-full h-1 overflow-hidden">
+                    <div id="progress-bar" class="bg-blue-500 h-full w-0 transition-all"></div>
                 </div>
             </div>
         </div>
@@ -390,11 +394,10 @@
 
     <script>
         lucide.createIcons();
-        
         const { createFFmpeg, fetchFile } = FFmpeg;
         const ffmpeg = createFFmpeg({ 
-            log: true,
-            corePath: 'https://unpkg.com/@ffmpeg/core@0.11.0/dist/ffmpeg-core.js'
+            log: true, 
+            corePath: 'https://unpkg.com/@ffmpeg/core@0.11.0/dist/ffmpeg-core.js' 
         });
 
         const video = document.getElementById('main-video');
@@ -409,12 +412,15 @@
         const playBtn = document.getElementById('play-btn');
         const playIcon = document.getElementById('play-icon');
         const playhead = document.getElementById('playhead');
+        const waveformContainer = document.getElementById('waveform-container');
         
         let videoFile, audioFile;
         let isBold = false;
         let currentFontClass = 'font-tiktok';
         let videoDuration = 0;
         let audioDuration = 0;
+        let isDraggingWaveform = false;
+        let isPlaying = false;
 
         document.querySelectorAll('.font-btn').forEach(btn => {
             btn.onclick = () => {
@@ -429,48 +435,61 @@
             caption.className = currentFontClass + (isBold ? ' text-bold-outline' : '');
         }
 
+        document.getElementById('outline-color-picker').oninput = (e) => {
+            caption.style.setProperty('--outline-color', e.target.value);
+            e.target.parentElement.style.borderColor = e.target.value;
+        };
+        
         document.getElementById('text-color').oninput = (e) => {
             caption.style.color = e.target.value;
             e.target.parentElement.style.borderColor = e.target.value;
         };
 
-        document.getElementById('outline-color-picker').oninput = (e) => {
-            caption.style.setProperty('--outline-color', e.target.value);
-            e.target.parentElement.style.borderColor = e.target.value;
-        };
-
-        playBtn.onclick = () => {
-            if (video.paused) {
-                video.currentTime = 0;
-                audio.currentTime = parseFloat(audioSlider.value);
-                video.play();
-                if (audio.src) audio.play();
-                updatePlayIcon(true);
-            } else {
+        // Fix Play/Pause to avoid AbortError
+        async function togglePlayback() {
+            if (isPlaying) {
                 video.pause();
                 audio.pause();
+                isPlaying = false;
                 updatePlayIcon(false);
+            } else {
+                try {
+                    video.currentTime = 0;
+                    audio.currentTime = parseFloat(audioSlider.value);
+                    
+                    const vPlay = video.play();
+                    let aPlay = null;
+                    if (audio.src) aPlay = audio.play();
+                    
+                    await Promise.all([vPlay, aPlay].filter(p => p !== null));
+                    isPlaying = true;
+                    updatePlayIcon(true);
+                } catch (err) {
+                    console.error("Playback failed", err);
+                }
             }
-        };
+        }
 
-        function updatePlayIcon(isPlaying) {
-            playIcon.setAttribute('data-lucide', isPlaying ? 'pause' : 'play');
+        playBtn.onclick = togglePlayback;
+
+        function updatePlayIcon(isP) {
+            playIcon.setAttribute('data-lucide', isP ? 'pause' : 'play');
             lucide.createIcons();
         }
 
         video.ontimeupdate = () => {
-            if (!video.paused) {
+            if (isPlaying && !video.paused) {
                 const ratio = video.currentTime / videoDuration;
-                const startLeft = parseFloat(highlighter.style.left) || 0;
-                const width = parseFloat(highlighter.style.width) || 0;
-                playhead.style.left = `${startLeft + (ratio * width)}%`;
-                
-                // Keep audio in sync
-                const startOffset = parseFloat(audioSlider.value);
-                if (Math.abs(audio.currentTime - (startOffset + video.currentTime)) > 0.3) {
-                    audio.currentTime = startOffset + video.currentTime;
-                }
+                const hLeft = parseFloat(highlighter.style.left) || 0;
+                const hWidth = parseFloat(highlighter.style.width) || 0;
+                playhead.style.left = `${hLeft + (ratio * hWidth)}%`;
                 updateTimeDisplay();
+                
+                // Sync audio if it drifts
+                const targetAudioTime = parseFloat(audioSlider.value) + video.currentTime;
+                if (audio.src && Math.abs(audio.currentTime - targetAudioTime) > 0.3) {
+                    audio.currentTime = targetAudioTime;
+                }
             }
         };
 
@@ -481,7 +500,7 @@
                 document.getElementById('video-label').innerText = videoFile.name;
                 video.onloadedmetadata = () => {
                     videoDuration = video.duration;
-                    updateAudioRange();
+                    updateAudioControls();
                 };
             }
         };
@@ -493,61 +512,94 @@
                 document.getElementById('audio-label').innerText = audioFile.name;
                 audio.onloadedmetadata = () => {
                     audioDuration = audio.duration;
-                    updateAudioRange();
+                    updateAudioControls();
                     drawWaveform(audioFile);
                 };
             }
         };
 
-        function updateAudioRange() {
+        function updateAudioControls() {
             if (audioDuration > 0 && videoDuration > 0) {
                 const maxStart = Math.max(0, audioDuration - videoDuration);
                 audioSlider.max = maxStart;
-                const width = (videoDuration / audioDuration) * 100;
-                highlighter.style.width = `${Math.min(100, width)}%`;
-                syncTimeline();
+                const widthPercent = (videoDuration / audioDuration) * 100;
+                highlighter.style.width = `${Math.min(100, widthPercent)}%`;
+                updateVisuals();
             }
         }
 
-        function syncTimeline() {
-            const start = parseFloat(audioSlider.value);
-            const left = (start / audioDuration) * 100;
-            highlighter.style.left = `${left}%`;
-            syncLabel.innerText = `Start: ${start.toFixed(1)}s`;
-            audio.currentTime = start;
-            playhead.style.left = `${left}%`;
-            video.currentTime = 0;
+        function updateVisuals() {
+            if (audioDuration > 0) {
+                const start = parseFloat(audioSlider.value);
+                const leftPercent = (start / audioDuration) * 100;
+                highlighter.style.left = `${leftPercent}%`;
+                syncLabel.innerText = `Inizio: ${start.toFixed(1)}s`;
+                
+                video.currentTime = 0;
+                audio.currentTime = start;
+                playhead.style.left = `${leftPercent}%`;
+                updateTimeDisplay();
+            }
         }
 
-        audioSlider.oninput = syncTimeline;
+        audioSlider.oninput = updateVisuals;
+
+        function handleWaveformMove(e) {
+            if (!isDraggingWaveform || audioDuration <= 0) return;
+            const rect = waveformContainer.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const ratio = x / rect.width;
+            const maxStart = Math.max(0, audioDuration - videoDuration);
+            let target = (ratio * audioDuration) - (videoDuration / 2);
+            target = Math.max(0, Math.min(target, maxStart));
+            audioSlider.value = target;
+            updateVisuals();
+        }
+
+        waveformContainer.onmousedown = (e) => { isDraggingWaveform = true; handleWaveformMove(e); };
+        window.onmousemove = (e) => { if (isDraggingWaveform) handleWaveformMove(e); };
+        window.onmouseup = () => { isDraggingWaveform = false; };
 
         async function drawWaveform(file) {
             const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             const arrayBuffer = await file.arrayBuffer();
             const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
             const data = audioBuffer.getChannelData(0);
-            const segments = 100;
+            const segments = 160;
             const blockSize = Math.floor(data.length / segments);
-            
-            canvas.width = canvas.offsetWidth * 2;
-            canvas.height = canvas.offsetHeight * 2;
-            const barWidth = canvas.width / segments;
-
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const filteredData = [];
             for (let i = 0; i < segments; i++) {
                 let sum = 0;
-                for (let j = 0; j < blockSize; j++) sum += Math.abs(data[i * blockSize + j]);
-                const h = (sum / blockSize) * canvas.height * 2;
-                ctx.fillStyle = '#3B82F6';
-                ctx.beginPath();
-                ctx.roundRect(i * barWidth + 2, (canvas.height - h) / 2, barWidth - 4, h, 2);
-                ctx.fill();
+                for (let j = 0; j < blockSize; j++) {
+                    const val = data[i * blockSize + j];
+                    sum += val * val;
+                }
+                filteredData.push(Math.sqrt(sum / blockSize));
             }
+            const multiplier = Math.pow(Math.max(...filteredData), -1) * 0.9;
+            const normalizedData = filteredData.map(n => n * multiplier);
+            canvas.width = canvas.offsetWidth * 2;
+            canvas.height = canvas.offsetHeight * 2;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const barWidth = (canvas.width / segments);
+            const centerY = canvas.height / 2;
+            normalizedData.forEach((val, i) => {
+                const h = val * canvas.height;
+                const x = i * barWidth;
+                const gradient = ctx.createLinearGradient(0, centerY - h/2, 0, centerY + h/2);
+                gradient.addColorStop(0, '#3B82F6');
+                gradient.addColorStop(1, '#8B5CF6');
+                ctx.fillStyle = gradient;
+                const cbH = Math.max(4, h);
+                ctx.beginPath();
+                ctx.roundRect(x + 1, centerY - cbH / 2, barWidth - 3, cbH, 4);
+                ctx.fill();
+            });
         }
 
         function updateTimeDisplay() {
             const cur = Math.floor(video.currentTime);
-            const dur = Math.floor(videoDuration);
+            const dur = Math.floor(videoDuration || 0);
             audioTimeDisplay.innerText = `${Math.floor(cur/60)}:${(cur%60).toString().padStart(2,'0')} / ${Math.floor(dur/60)}:${(dur%60).toString().padStart(2,'0')}`;
         }
 
@@ -556,95 +608,98 @@
             caption.style.fontSize = e.target.value + 'px';
             document.getElementById('font-size-val').innerText = e.target.value + 'px';
         };
-
+        
         document.getElementById('toggle-bold').onclick = function() {
             isBold = !isBold;
-            document.getElementById('bold-dot').style.transform = isBold ? 'translateX(18px)' : 'translateX(0)';
+            document.getElementById('bold-dot').style.transform = isBold ? 'translateX(16px)' : 'translateX(0)';
             this.style.backgroundColor = isBold ? '#3B82F6' : '#3F3F46';
             updateCaptionStyles();
         };
 
-        let dragging = false, offset;
-        caption.onmousedown = (e) => { dragging = true; offset = e.clientY - caption.offsetTop; };
-        window.onmousemove = (e) => {
-            if (!dragging) return;
-            const rect = document.getElementById('drop-zone').getBoundingClientRect();
-            let y = e.clientY - rect.top - offset;
-            caption.style.top = `${Math.max(20, Math.min(y, rect.height - 50))}px`;
-        };
-        window.onmouseup = () => dragging = false;
-
-        document.getElementById('toggle-guide').onclick = () => {
-            const g = document.getElementById('safe-guide');
-            g.classList.toggle('hidden');
-        };
-
+        // Export Functionality
         document.getElementById('export-btn').onclick = async () => {
-            if (!videoFile) return alert("Per favore carica un video!");
+            if (!videoFile) return alert("Per favore carica un video prima di esportare.");
             
-            const status = document.getElementById('export-status');
-            const progressBar = document.getElementById('progress-bar');
-            const percentText = document.getElementById('percent-text');
+            const statusBox = document.getElementById('export-status');
+            const progress = document.getElementById('progress-bar');
             const statusText = document.getElementById('status-text');
+            const percentText = document.getElementById('percent-text');
             
-            status.classList.remove('hidden');
-            statusText.innerText = "Inizializzazione FFmpeg...";
-            
+            statusBox.classList.remove('hidden');
+            statusText.innerText = "Caricamento motore...";
+
             try {
                 if (!ffmpeg.isLoaded()) {
                     await ffmpeg.load();
                 }
 
-                ffmpeg.FS('writeFile', 'input_video.mp4', await fetchFile(videoFile));
+                statusText.innerText = "Preparazione file...";
+                ffmpeg.FS('writeFile', 'input_v.mp4', await fetchFile(videoFile));
                 
                 let command = [];
                 if (audioFile) {
-                    statusText.innerText = "Preparazione audio...";
-                    ffmpeg.FS('writeFile', 'input_audio.mp3', await fetchFile(audioFile));
-                    const startTime = parseFloat(audioSlider.value);
+                    ffmpeg.FS('writeFile', 'input_a.mp3', await fetchFile(audioFile));
+                    const startTime = parseFloat(audioSlider.value).toString();
+                    const duration = videoDuration.toString();
                     
+                    // Command to cut audio and merge with video
                     command = [
-                        '-i', 'input_video.mp4',
-                        '-ss', startTime.toString(),
-                        '-t', videoDuration.toString(),
-                        '-i', 'input_audio.mp3',
-                        '-c:v', 'copy',
-                        '-c:a', 'aac',
+                        '-i', 'input_v.mp4',
+                        '-ss', startTime,
+                        '-t', duration,
+                        '-i', 'input_a.mp3',
                         '-map', '0:v:0',
                         '-map', '1:a:0',
+                        '-c:v', 'copy',
+                        '-c:a', 'aac',
+                        '-b:a', '192k',
                         '-shortest',
                         'output.mp4'
                     ];
                 } else {
-                    command = ['-i', 'input_video.mp4', '-c:v', 'copy', '-an', 'output.mp4'];
+                    command = ['-i', 'input_v.mp4', '-c:v', 'copy', '-an', 'output.mp4'];
                 }
 
-                statusText.innerText = "Esportazione in corso...";
+                statusText.innerText = "Elaborazione video...";
                 ffmpeg.setProgress(({ ratio }) => {
                     const p = Math.floor(ratio * 100);
-                    if (p >= 0 && p <= 100) {
-                        progressBar.style.width = p + '%';
-                        percentText.innerText = p + '%';
-                    }
+                    progress.style.width = p + '%';
+                    percentText.innerText = p + '%';
                 });
 
                 await ffmpeg.run(...command);
 
                 const data = ffmpeg.FS('readFile', 'output.mp4');
                 const url = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
-                const link = document.createElement('a');
-                link.href = url;
-                link.download = 'Soundvertise_Video.mp4';
-                link.click();
+                const downloadLink = document.createElement('a');
+                downloadLink.href = url;
+                downloadLink.download = `Soundvertise_Studio_${Date.now()}.mp4`;
+                downloadLink.click();
 
-                statusText.innerText = "Fatto!";
-                setTimeout(() => status.classList.add('hidden'), 3000);
+                statusText.innerText = "Completato!";
+                setTimeout(() => statusBox.classList.add('hidden'), 3000);
 
             } catch (err) {
-                console.error("FFmpeg Error:", err);
-                statusText.innerText = "Errore: " + err.message;
+                console.error(err);
+                statusText.innerText = "Errore durante l'export.";
             }
         };
+
+        document.getElementById('toggle-guide').onclick = () => {
+            const g = document.getElementById('safe-guide');
+            g.style.display = g.style.display === 'none' ? 'block' : 'none';
+        };
+
+        // Text Dragging
+        let draggingText = false, textStartY;
+        caption.onmousedown = (e) => { draggingText = true; textStartY = e.clientY - caption.offsetTop; };
+        window.addEventListener('mousemove', (e) => {
+            if (!draggingText) return;
+            const rect = document.getElementById('drop-zone').getBoundingClientRect();
+            let y = e.clientY - rect.top - textStartY;
+            caption.style.top = `${Math.max(10, Math.min(y, rect.height - 40))}px`;
+        });
+        window.addEventListener('mouseup', () => draggingText = false);
     </script>
 </body>
 </html>
