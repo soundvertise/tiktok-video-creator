@@ -5,80 +5,145 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Soundvertise Studio | TikTok Creator</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Inter:wght@400;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Inter:wght@400;600;800&family=Courier+Prime&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@ffmpeg/ffmpeg@0.11.0/dist/ffmpeg.min.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        body { background: #050505; color: white; font-family: 'Inter', sans-serif; }
-        .iphone { width: 280px; aspect-ratio: 9/16; border: 8px solid #1a1a1a; border-radius: 40px; position: relative; overflow: hidden; background: #000; }
-        .video-box { width: 100%; height: 100%; position: relative; }
-        #main-video { width: 100%; height: 100%; object-fit: cover; }
-        #caption-overlay { position: absolute; top: 30%; left: 50%; transform: translateX(-50%); width: 80%; text-align: center; z-index: 10; font-family: 'Montserrat', sans-serif; font-weight: 900; text-transform: uppercase; text-shadow: 2px 2px 0 #000; cursor: move; }
-        .terminal { background: #000; border: 1px solid #333; font-family: monospace; font-size: 10px; color: #0f0; padding: 10px; height: 120px; overflow-y: auto; border-radius: 12px; }
-        .btn-primary { background: linear-gradient(135deg, #3b82f6, #8b5cf6); padding: 12px; border-radius: 12px; font-weight: 900; text-transform: uppercase; font-size: 12px; transition: 0.3s; }
-        .btn-primary:hover { opacity: 0.9; transform: scale(1.02); }
+        :root { --sv-blue: #3B82F6; --sv-purple: #8B5CF6; }
+        body { background-color: #050505; color: white; font-family: 'Inter', sans-serif; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        
+        /* Mockup iPhone */
+        .iphone-frame { width: 290px; aspect-ratio: 9 / 16; border: 10px solid #1A1A1A; border-radius: 42px; position: relative; background: #000; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+        .notch { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); width: 75px; height: 22px; background: #000; border-radius: 20px; z-index: 50; border: 1px solid #222; }
+        
+        .video-container { width: 100%; height: 100%; position: relative; }
+        video { width: 100%; height: 100%; object-fit: cover; }
+        
+        #caption-overlay { position: absolute; cursor: move; user-select: none; text-align: center; max-width: 85%; z-index: 30; left: 50%; transform: translateX(-50%); text-shadow: 2px 2px 0 #000; line-height: 1.1; }
+        
+        /* Waveform */
+        .waveform-wrapper { position: relative; width: 100%; height: 80px; background: #000; border-radius: 12px; overflow: hidden; border: 1px solid #333; }
+        #audio-range-highlighter { position: absolute; top: 0; height: 100%; background: rgba(59, 130, 246, 0.2); border-left: 2px solid var(--sv-blue); border-right: 2px solid var(--sv-blue); }
+        
+        /* UI Elements */
+        .btn-sv { background: linear-gradient(135deg, var(--sv-blue) 0%, var(--sv-purple) 100%); transition: 0.3s; font-weight: 800; text-transform: uppercase; }
+        .btn-sv:hover { filter: brightness(1.1); transform: translateY(-1px); }
+        
+        .terminal { background: #000; border: 1px solid #222; font-family: monospace; font-size: 9px; color: #4ade80; padding: 10px; height: 80px; overflow-y: auto; border-radius: 12px; margin-top: 10px; }
+        
+        /* Fonts */
+        .font-tiktok { font-family: 'Montserrat', sans-serif; font-weight: 900; text-transform: uppercase; }
+        .font-retro { font-family: 'Courier Prime', monospace; }
+        .font-script { font-family: 'Dancing Script', cursive; }
+        
+        .font-btn { background: #111; border: 1px solid #333; padding: 8px; border-radius: 10px; font-size: 10px; transition: 0.2s; }
+        .font-btn.active { border-color: var(--sv-blue); color: var(--sv-blue); background: rgba(59, 130, 246, 0.1); }
     </style>
 </head>
-<body class="flex items-center justify-center min-h-screen p-4">
+<body>
 
-    <div class="max-w-5xl w-full grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <div class="max-w-6xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
         
-        <div class="flex flex-col items-center gap-4">
-            <div class="iphone">
-                <div class="video-box">
-                    <video id="main-video" loop playsinline crossorigin="anonymous"></video>
-                    <div id="caption-overlay">IL TUO TESTO</div>
+        <div class="flex flex-col items-center space-y-6">
+            <div class="iphone-frame">
+                <div class="notch"></div>
+                <div class="video-container" id="drop-zone">
+                    <video id="main-video" loop crossorigin="anonymous" playsinline></video>
+                    <div id="caption-overlay" class="font-tiktok" style="top: 35%; font-size: 24px; color: white;">SCRIVI IL TUO TESTO</div>
+                    
+                    <div class="absolute inset-0 pointer-events-none p-4 flex flex-col justify-end">
+                        <div class="flex justify-between items-end pb-8">
+                            <div class="space-y-2">
+                                <p class="font-bold text-sm">@soundvertise.co</p>
+                                <p class="text-xs opacity-80">Sync your music effortlessly #studio</p>
+                            </div>
+                            <div class="flex flex-col gap-4 items-center">
+                                <i data-lucide="heart" class="fill-white w-6 h-6"></i>
+                                <i data-lucide="message-circle" class="fill-white w-6 h-6"></i>
+                                <i data-lucide="share-2" class="fill-white w-6 h-6"></i>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <p class="text-[10px] text-zinc-500 uppercase font-bold tracking-widest">Anteprima Real-time</p>
         </div>
 
-        <div class="bg-zinc-900/50 p-6 rounded-[24px] border border-zinc-800 space-y-6">
-            <h1 class="font-black italic text-xl">SOUNDVERTISE <span class="text-blue-500">STUDIO</span></h1>
+        <div class="bg-zinc-900/40 p-8 rounded-[40px] border border-zinc-800 space-y-6 backdrop-blur-xl">
+            <header class="flex justify-between items-center border-b border-zinc-800/50 pb-4">
+                <h1 class="text-xl font-black italic">STUDIO <span class="text-blue-500">CREATOR</span></h1>
+                <span id="audio-time" class="font-mono text-xs text-blue-400">00:00 / 00:00</span>
+            </header>
 
             <div class="grid grid-cols-2 gap-4">
-                <input type="file" id="v-input" accept="video/*" class="hidden">
-                <button onclick="document.getElementById('v-input').click()" class="bg-zinc-800 p-3 rounded-lg text-xs font-bold border border-zinc-700">CARICA VIDEO</button>
+                <button onclick="document.getElementById('video-input').click()" class="bg-black border border-zinc-800 p-4 rounded-2xl text-xs font-bold hover:border-blue-500 transition">CARICA VIDEO</button>
+                <input type="file" id="video-input" accept="video/*" class="hidden">
                 
-                <input type="file" id="a-input" accept="audio/*" class="hidden">
-                <button onclick="document.getElementById('a-input').click()" class="bg-zinc-800 p-3 rounded-lg text-xs font-bold border border-zinc-700">CARICA AUDIO</button>
+                <button onclick="document.getElementById('audio-input').click()" class="bg-black border border-zinc-800 p-4 rounded-2xl text-xs font-bold hover:border-purple-500 transition">CARICA AUDIO</button>
+                <input type="file" id="audio-input" accept="audio/*" class="hidden">
             </div>
 
-            <textarea id="t-input" placeholder="Scrivi il testo qui..." class="w-full bg-black border border-zinc-800 p-3 rounded-xl text-sm outline-none focus:border-blue-500 h-20"></textarea>
-
-            <div class="space-y-2">
-                <button id="export-btn" class="w-full btn-primary">Esporta Video MP4</button>
-                <div id="progress-container" class="hidden">
-                    <div class="flex justify-between text-[10px] mb-1"><span id="status-text">Inizializzazione...</span><span id="percent">0%</span></div>
-                    <div class="w-full bg-zinc-800 h-1 rounded-full"><div id="bar" class="bg-blue-500 h-full w-0"></div></div>
+            <div class="bg-black p-4 rounded-2xl border border-zinc-800 space-y-4">
+                <div class="flex items-center gap-4">
+                    <button id="play-btn" class="w-12 h-12 rounded-full btn-sv flex items-center justify-center shadow-lg shadow-blue-500/20">
+                        <i data-lucide="play" id="play-icon" class="fill-white"></i>
+                    </button>
+                    <div class="flex-1">
+                        <div class="waveform-wrapper">
+                            <canvas id="waveform" class="w-full h-full opacity-50"></canvas>
+                            <div id="audio-range-highlighter"></div>
+                        </div>
+                        <input type="range" id="audio-slider" class="w-full mt-2 accent-blue-500" min="0" value="0" step="0.01">
+                    </div>
+                </div>
+                <div class="flex justify-between text-[10px] font-bold text-zinc-500 uppercase">
+                    <span id="sync-label">Sync: 0.0s</span>
+                    <span>Sincronizza Audio</span>
                 </div>
             </div>
 
-            <div class="terminal" id="terminal">
-                <div>> Sistema pronto. In attesa di file...</div>
+            <div class="space-y-4 bg-zinc-900/60 p-5 rounded-3xl border border-zinc-800">
+                <textarea id="caption-input" placeholder="Testo del video..." class="w-full bg-black border border-zinc-800 rounded-xl p-3 text-sm focus:border-blue-500 outline-none h-16"></textarea>
+                <div class="grid grid-cols-3 gap-2">
+                    <button class="font-btn active" data-font="font-tiktok">TIKTOK</button>
+                    <button class="font-btn" data-font="font-retro">RETRO</button>
+                    <button class="font-btn" data-font="font-script">SCRIPT</button>
+                </div>
+            </div>
+
+            <div class="space-y-3">
+                <button id="export-btn" class="w-full btn-sv py-4 rounded-2xl text-[11px] tracking-[2px]">
+                    GENERA ED ESPORTA MP4
+                </button>
+                
+                <div id="export-status" class="hidden space-y-2">
+                    <div class="flex justify-between text-[10px] font-bold text-blue-400">
+                        <span id="status-text">ELABORAZIONE...</span>
+                        <span id="percent-text">0%</span>
+                    </div>
+                    <div class="w-full bg-zinc-800 h-1.5 rounded-full overflow-hidden">
+                        <div id="progress-bar" class="bg-blue-500 h-full w-0 transition-all"></div>
+                    </div>
+                </div>
+
+                <div class="terminal" id="terminal">
+                    <div>> Pronto. Carica i file per iniziare.</div>
+                </div>
             </div>
         </div>
     </div>
 
-    <audio id="main-audio" crossorigin="anonymous"></audio>
+    <audio id="bg-music" crossorigin="anonymous"></audio>
 
     <script>
         lucide.createIcons();
         const { createFFmpeg, fetchFile } = FFmpeg;
-
-        // Inizializzazione Log
+        
         const term = document.getElementById('terminal');
-        function logger(msg) {
+        function addLog(msg) {
             const d = document.createElement('div');
             d.innerText = `> ${msg}`;
             term.appendChild(d);
             term.scrollTop = term.scrollHeight;
-        }
-
-        // Controllo Sicurezza SharedArrayBuffer
-        if (!window.SharedArrayBuffer) {
-            logger("!!! ERRORE SICUREZZA: SharedArrayBuffer non attivo.");
-            logger("Assicurati che vercel.json sia presente e fai il deploy.");
         }
 
         const ffmpeg = createFFmpeg({ 
@@ -86,91 +151,120 @@
             corePath: 'https://unpkg.com/@ffmpeg/core@0.11.0/dist/ffmpeg-core.js' 
         });
 
-        ffmpeg.setLogger(({ message }) => logger(message));
+        ffmpeg.setLogger(({ message }) => addLog(message));
 
         const video = document.getElementById('main-video');
-        const audio = document.getElementById('main-audio');
+        const audio = document.getElementById('bg-music');
         const caption = document.getElementById('caption-overlay');
-        let vFile, aFile;
+        const audioSlider = document.getElementById('audio-slider');
+        const highlighter = document.getElementById('audio-range-highlighter');
+        
+        let vFile, aFile, isPlaying = false;
 
-        // Gestione Input
-        document.getElementById('v-input').onchange = (e) => {
+        // UI Logic
+        document.getElementById('caption-input').oninput = (e) => caption.innerText = e.target.value || 'SCRIVI IL TUO TESTO';
+        document.querySelectorAll('.font-btn').forEach(btn => {
+            btn.onclick = () => {
+                document.querySelectorAll('.font-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                caption.className = btn.dataset.font;
+            };
+        });
+
+        // File Loading
+        document.getElementById('video-input').onchange = (e) => {
             vFile = e.target.files[0];
             video.src = URL.createObjectURL(vFile);
-            logger("Video caricato: " + vFile.name);
+            video.onloadedmetadata = () => updateSync();
+            addLog("Video caricato.");
         };
 
-        document.getElementById('a-input').onchange = (e) => {
+        document.getElementById('audio-input').onchange = (e) => {
             aFile = e.target.files[0];
             audio.src = URL.createObjectURL(aFile);
-            logger("Audio caricato: " + aFile.name);
+            audio.onloadedmetadata = () => updateSync();
+            addLog("Audio caricato.");
         };
 
-        document.getElementById('t-input').oninput = (e) => {
-            caption.innerText = e.target.value || "IL TUO TESTO";
+        function updateSync() {
+            if (audio.duration && video.duration) {
+                audioSlider.max = Math.max(0, audio.duration - video.duration);
+                highlighter.style.width = `${(video.duration / audio.duration) * 100}%`;
+            }
+        }
+
+        audioSlider.oninput = () => {
+            const val = parseFloat(audioSlider.value);
+            highlighter.style.left = `${(val / audio.duration) * 100}%`;
+            document.getElementById('sync-label').innerText = `Sync: ${val.toFixed(1)}s`;
+            if (!isPlaying) audio.currentTime = val;
+        };
+
+        // Playback
+        document.getElementById('play-btn').onclick = async () => {
+            if (isPlaying) {
+                video.pause(); audio.pause();
+            } else {
+                audio.currentTime = parseFloat(audioSlider.value);
+                video.currentTime = 0;
+                await video.play(); await audio.play();
+            }
+            isPlaying = !isPlaying;
+            document.getElementById('play-icon').setAttribute('data-lucide', isPlaying ? 'pause' : 'play');
+            lucide.createIcons();
         };
 
         // EXPORT
         document.getElementById('export-btn').onclick = async () => {
-            if (!vFile) return alert("Carica almeno un video!");
+            if (!vFile) return alert("Carica un video!");
             
-            document.getElementById('progress-container').classList.remove('hidden');
-            const bar = document.getElementById('bar');
-            const per = document.getElementById('percent');
-
+            document.getElementById('export-status').classList.remove('hidden');
+            const progress = document.getElementById('progress-bar');
+            
             try {
-                if (!ffmpeg.isLoaded()) {
-                    logger("Caricamento FFmpeg Core...");
-                    await ffmpeg.load();
-                }
+                if (!ffmpeg.isLoaded()) await ffmpeg.load();
 
-                logger("Scrittura file nel sistema virtuale...");
-                ffmpeg.FS('writeFile', 'video.mp4', await fetchFile(vFile));
+                ffmpeg.FS('writeFile', 'v.mp4', await fetchFile(vFile));
                 
                 let args = [];
                 if (aFile) {
-                    ffmpeg.FS('writeFile', 'audio.mp3', await fetchFile(aFile));
-                    // Semplice merge audio/video
-                    args = ['-i', 'video.mp4', '-i', 'audio.mp3', '-c:v', 'copy', '-c:a', 'aac', '-map', '0:v:0', '-map', '1:a:0', '-shortest', 'out.mp4'];
+                    ffmpeg.FS('writeFile', 'a.mp3', await fetchFile(aFile));
+                    const start = parseFloat(audioSlider.value).toString();
+                    args = ['-i', 'v.mp4', '-ss', start, '-t', video.duration.toFixed(2), '-i', 'a.mp3', '-map', '0:v:0', '-map', '1:a:0', '-c:v', 'copy', '-c:a', 'aac', '-shortest', 'out.mp4'];
                 } else {
-                    args = ['-i', 'video.mp4', '-c:v', 'copy', 'out.mp4'];
+                    args = ['-i', 'v.mp4', '-c:v', 'copy', 'out.mp4'];
                 }
 
                 ffmpeg.setProgress(({ ratio }) => {
-                    const p = Math.floor(ratio * 100);
-                    bar.style.width = p + '%';
-                    per.innerText = p + '%';
+                    progress.style.width = (ratio * 100) + '%';
+                    document.getElementById('percent-text').innerText = Math.floor(ratio * 100) + '%';
                 });
 
-                logger("Esecuzione comando FFmpeg...");
+                addLog("Inizio Fusione Audio/Video...");
                 await ffmpeg.run(...args);
 
-                logger("Lettura file finale...");
                 const data = ffmpeg.FS('readFile', 'out.mp4');
                 const url = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
+                const a = document.createElement('a');
+                a.href = url; a.download = `Soundvertise_Studio_${Date.now()}.mp4`; a.click();
                 
-                const link = document.createElement('a');
-                link.href = url;
-                link.download = "video_soundvertise.mp4";
-                link.click();
-                
-                logger("ESPORTAZIONE COMPLETATA!");
+                addLog("NOTA: L'export contiene Video + Audio Sync. Il testo overlay è un elemento web e non viene impresso nel file.");
+
             } catch (err) {
-                logger("ERRORE: " + err.message);
-                console.error(err);
+                addLog("ERRORE: " + err.message);
             }
         };
 
         // Drag Testo
-        let isDown = false;
-        caption.onmousedown = () => isDown = true;
-        window.onmouseup = () => isDown = false;
+        let dragging = false, startY;
+        caption.onmousedown = (e) => { dragging = true; startY = e.clientY - caption.offsetTop; };
         window.onmousemove = (e) => {
-            if (!isDown) return;
-            const rect = video.getBoundingClientRect();
-            let y = e.clientY - rect.top;
-            caption.style.top = y + "px";
+            if (!dragging) return;
+            const rect = document.getElementById('drop-zone').getBoundingClientRect();
+            let y = e.clientY - rect.top - startY;
+            caption.style.top = `${Math.max(0, Math.min(y, rect.height - 40))}px`;
         };
+        window.onmouseup = () => dragging = false;
     </script>
 </body>
 </html>
