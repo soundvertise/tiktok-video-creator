@@ -6,8 +6,7 @@
     <title>TikTok Video Creator | Soundvertise</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&family=Courier+Prime:wght@400;700&family=Inter:wght@400;600;800&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
-    <!-- Updated FFmpeg scripts for better compatibility -->
-    <script src="https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.11.6/dist/ffmpeg.min.js"></script>
+    <script src="https://unpkg.com/@ffmpeg/ffmpeg@0.11.6/dist/ffmpeg.min.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         :root {
@@ -28,7 +27,6 @@
             justify-content: center;
         }
 
-        /* Centered Layout and Enlarged iPhone */
         .app-container {
             width: 100%;
             max-width: 1200px;
@@ -48,7 +46,7 @@
         }
 
         .iphone-frame {
-            width: 320px; /* Slightly larger */
+            width: 320px;
             aspect-ratio: 9 / 16;
             border: 12px solid #1A1A1A;
             border-radius: 48px;
@@ -230,7 +228,6 @@
 <body>
 
     <div class="app-container">
-        <!-- Preview Mockup (LEFT) -->
         <div class="flex flex-col items-center gap-6">
             <div class="iphone-frame" id="iphone">
                 <div class="notch"></div>
@@ -272,7 +269,6 @@
             </button>
         </div>
 
-        <!-- Controls (RIGHT) -->
         <div class="flex-1 max-w-[500px] space-y-6">
             <div class="bg-zinc-900/50 border border-zinc-800 p-8 rounded-[2.5rem] backdrop-blur-md shadow-2xl">
                 <header class="flex justify-between items-center mb-8">
@@ -285,7 +281,6 @@
                     <div id="audio-time" class="text-xs font-mono text-blue-400 font-bold">00:00 / 00:00</div>
                 </header>
 
-                <!-- Media Upload -->
                 <div class="grid grid-cols-2 gap-4 mb-6">
                     <div class="space-y-2">
                         <label class="text-[10px] font-black text-zinc-500 uppercase">Video</label>
@@ -305,7 +300,6 @@
                     </div>
                 </div>
 
-                <!-- Audio Waveform -->
                 <div class="bg-black p-4 rounded-3xl border border-zinc-800 mb-6">
                     <div class="flex items-center gap-4">
                         <button id="play-btn" class="w-12 h-12 rounded-2xl btn-sv flex items-center justify-center shrink-0">
@@ -326,7 +320,6 @@
                     <input type="range" id="audio-slider" class="w-full mt-4 accent-blue-500" min="0" value="0" step="0.01">
                 </div>
 
-                <!-- Text Settings -->
                 <div class="space-y-6">
                     <div class="space-y-2">
                         <label class="text-[10px] font-black text-zinc-500 uppercase">Testo</label>
@@ -374,7 +367,6 @@
                         <span class="text-[9px] text-zinc-600 font-bold uppercase italic">Trascina il testo sulla preview</span>
                     </div>
 
-                    <!-- Export Action -->
                     <div class="pt-4">
                         <button id="export-btn" class="w-full btn-sv text-white font-black py-5 rounded-2xl flex items-center justify-center gap-3 uppercase tracking-widest text-xs shadow-lg">
                             <i data-lucide="download" class="w-4 h-4"></i> Esporta MP4
@@ -399,11 +391,9 @@
     <script>
         lucide.createIcons();
         
-        // Use standard FFmpeg destruction/creation to avoid memory leaks
         const { createFFmpeg, fetchFile } = FFmpeg;
         const ffmpeg = createFFmpeg({ 
             log: true,
-            mainName: 'main',
             corePath: 'https://unpkg.com/@ffmpeg/core@0.11.0/dist/ffmpeg-core.js'
         });
 
@@ -419,16 +409,13 @@
         const playBtn = document.getElementById('play-btn');
         const playIcon = document.getElementById('play-icon');
         const playhead = document.getElementById('playhead');
-        const waveformContainer = document.getElementById('waveform-container');
         
         let videoFile, audioFile;
         let isBold = false;
         let currentFontClass = 'font-tiktok';
         let videoDuration = 0;
         let audioDuration = 0;
-        let isDraggingWaveform = false;
 
-        // UI Initialization
         document.querySelectorAll('.font-btn').forEach(btn => {
             btn.onclick = () => {
                 document.querySelectorAll('.font-btn').forEach(b => b.classList.remove('active'));
@@ -471,20 +458,18 @@
             lucide.createIcons();
         }
 
-        audio.ontimeupdate = () => {
-            if (!audio.paused && audioDuration > 0 && videoDuration > 0) {
-                const start = parseFloat(audioSlider.value);
-                const end = start + videoDuration;
-                if (audio.currentTime >= end) audio.currentTime = start;
-            }
-        };
-
         video.ontimeupdate = () => {
             if (!video.paused) {
                 const ratio = video.currentTime / videoDuration;
                 const startLeft = parseFloat(highlighter.style.left) || 0;
                 const width = parseFloat(highlighter.style.width) || 0;
                 playhead.style.left = `${startLeft + (ratio * width)}%`;
+                
+                // Keep audio in sync
+                const startOffset = parseFloat(audioSlider.value);
+                if (Math.abs(audio.currentTime - (startOffset + video.currentTime)) > 0.3) {
+                    audio.currentTime = startOffset + video.currentTime;
+                }
                 updateTimeDisplay();
             }
         };
@@ -530,7 +515,8 @@
             highlighter.style.left = `${left}%`;
             syncLabel.innerText = `Start: ${start.toFixed(1)}s`;
             audio.currentTime = start;
-            if (video.paused) playhead.style.left = `${left}%`;
+            playhead.style.left = `${left}%`;
+            video.currentTime = 0;
         }
 
         audioSlider.oninput = syncTimeline;
@@ -578,7 +564,6 @@
             updateCaptionStyles();
         };
 
-        // Text Dragging
         let dragging = false, offset;
         caption.onmousedown = (e) => { dragging = true; offset = e.clientY - caption.offsetTop; };
         window.onmousemove = (e) => {
@@ -594,7 +579,6 @@
             g.classList.toggle('hidden');
         };
 
-        // Export Logic Fixed
         document.getElementById('export-btn').onclick = async () => {
             if (!videoFile) return alert("Per favore carica un video!");
             
@@ -604,30 +588,30 @@
             const statusText = document.getElementById('status-text');
             
             status.classList.remove('hidden');
-            statusText.innerText = "Caricamento librerie...";
+            statusText.innerText = "Inizializzazione FFmpeg...";
             
             try {
                 if (!ffmpeg.isLoaded()) {
                     await ffmpeg.load();
                 }
 
-                statusText.innerText = "Preparazione file...";
                 ffmpeg.FS('writeFile', 'input_video.mp4', await fetchFile(videoFile));
                 
                 let command = [];
                 if (audioFile) {
+                    statusText.innerText = "Preparazione audio...";
                     ffmpeg.FS('writeFile', 'input_audio.mp3', await fetchFile(audioFile));
                     const startTime = parseFloat(audioSlider.value);
-                    // Combine video with synced audio
+                    
                     command = [
                         '-i', 'input_video.mp4',
                         '-ss', startTime.toString(),
                         '-t', videoDuration.toString(),
                         '-i', 'input_audio.mp3',
-                        '-map', '0:v:0',
-                        '-map', '1:a:0',
                         '-c:v', 'copy',
                         '-c:a', 'aac',
+                        '-map', '0:v:0',
+                        '-map', '1:a:0',
                         '-shortest',
                         'output.mp4'
                     ];
@@ -637,9 +621,11 @@
 
                 statusText.innerText = "Esportazione in corso...";
                 ffmpeg.setProgress(({ ratio }) => {
-                    const p = Math.max(0, Math.min(100, Math.round(ratio * 100)));
-                    progressBar.style.width = p + '%';
-                    percentText.innerText = p + '%';
+                    const p = Math.floor(ratio * 100);
+                    if (p >= 0 && p <= 100) {
+                        progressBar.style.width = p + '%';
+                        percentText.innerText = p + '%';
+                    }
                 });
 
                 await ffmpeg.run(...command);
@@ -651,13 +637,12 @@
                 link.download = 'Soundvertise_Video.mp4';
                 link.click();
 
-                statusText.innerText = "Completato!";
+                statusText.innerText = "Fatto!";
                 setTimeout(() => status.classList.add('hidden'), 3000);
 
             } catch (err) {
-                console.error(err);
-                statusText.innerText = "Errore durante l'export";
-                statusText.style.color = "#ef4444";
+                console.error("FFmpeg Error:", err);
+                statusText.innerText = "Errore: " + err.message;
             }
         };
     </script>
