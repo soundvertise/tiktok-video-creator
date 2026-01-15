@@ -90,10 +90,9 @@
             transform: translateX(-50%);
             --outline-color: #000000;
             transition: text-shadow 0.2s, color 0.2s;
-            paint-order: stroke fill; /* Migliora la resa del contorno */
+            paint-order: stroke fill;
         }
 
-        /* Effetto contorno migliorato e più "morbido" */
         .text-bold-outline {
             text-shadow: 
                 0 0 1px var(--outline-color),
@@ -139,6 +138,7 @@
             border-radius: 12px;
             border: 1px solid #333;
             overflow: hidden;
+            cursor: pointer;
         }
 
         .thumbnail-track {
@@ -173,6 +173,17 @@
             background: rgba(139, 92, 246, 0.15);
             border: 3px solid var(--sv-purple);
             box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+        }
+
+        .playhead-cursor {
+            position: absolute;
+            top: 0;
+            width: 2px;
+            height: 100%;
+            background: #ffffff;
+            z-index: 20;
+            pointer-events: none;
+            box-shadow: 0 0 10px rgba(255,255,255,0.8);
         }
 
         .trim-handle {
@@ -217,7 +228,6 @@
         }
         .btn-sv:hover { filter: brightness(1.1); transform: scale(1.02); }
 
-        /* Font styles - Ridotto weight da 900 a 800 per renderlo meno "massiccio" */
         .font-tiktok { font-family: 'Montserrat', sans-serif; font-weight: 800; letter-spacing: -0.5px; }
         .font-typewriter { font-family: 'Courier Prime', monospace; }
         .font-classic { font-family: 'Inter', sans-serif; font-weight: 800; }
@@ -360,6 +370,8 @@
                 </div>
                 <div class="trimmer-track h-[54px]" id="v-trimmer-track">
                     <div class="thumbnail-track" id="v-thumbs"></div>
+                    <!-- Playhead verticale per il video -->
+                    <div id="video-playhead" class="playhead-cursor" style="left: 0; display: none;"></div>
                     <div id="video-trim-overlay" class="trim-overlay">
                         <div class="trim-handle handle-left" id="v-handle-l"></div>
                         <div class="trim-handle handle-right" id="v-handle-r"></div>
@@ -382,6 +394,8 @@
                             <div class="waveform-wrapper">
                                 <canvas id="waveform"></canvas>
                             </div>
+                            <!-- Playhead verticale per l'audio -->
+                            <div id="audio-playhead" class="playhead-cursor" style="left: 0; display: none;"></div>
                             <div id="audio-trim-overlay" class="trim-overlay"></div>
                         </div>
                     </div>
@@ -461,6 +475,8 @@
         const aTrimOverlay = document.getElementById('audio-trim-overlay');
         const vTrimmerTrack = document.getElementById('v-trimmer-track');
         const aTrimmerTrack = document.getElementById('a-trimmer-track');
+        const vPlayhead = document.getElementById('video-playhead');
+        const aPlayhead = document.getElementById('audio-playhead');
         const canvas = document.getElementById('waveform');
         const ctx = canvas.getContext('2d');
 
@@ -505,20 +521,36 @@
 
         function loopMonitor() {
             if (!video.paused) {
-                if (video.currentTime >= vEnd - 0.1) {
+                if (videoDuration > 0) {
+                    const vPerc = (video.currentTime / videoDuration) * 100;
+                    vPlayhead.style.left = vPerc + '%';
+                    vPlayhead.style.display = 'block';
+                }
+
+                if (audio.src && audioDuration > 0) {
+                    const aPerc = (audio.currentTime / audioDuration) * 100;
+                    aPlayhead.style.left = aPerc + '%';
+                    aPlayhead.style.display = 'block';
+                }
+
+                if (video.currentTime >= vEnd - 0.05) {
                     video.currentTime = vStart;
                     if (audio.src) {
                         audio.currentTime = aStart;
                         audio.play().catch(() => {});
                     }
                 }
+
                 if (audio.src && !audio.paused) {
                     const videoOffset = video.currentTime - vStart;
                     const expectedAudioTime = aStart + videoOffset;
-                    if (Math.abs(audio.currentTime - expectedAudioTime) > 0.3) {
+                    if (Math.abs(audio.currentTime - expectedAudioTime) > 0.2) {
                         audio.currentTime = expectedAudioTime;
                     }
                 }
+            } else {
+                vPlayhead.style.display = 'none';
+                aPlayhead.style.display = 'none';
             }
             requestAnimationFrame(loopMonitor);
         }
@@ -528,11 +560,20 @@
             if (videoDuration === 0) return;
             const rect = vTrimmerTrack.getBoundingClientRect();
             const clickTime = ((e.clientX - rect.left) / rect.width) * videoDuration;
-            if (e.target.id === 'v-handle-l') isDraggingV = 'left';
-            else if (e.target.id === 'v-handle-r') isDraggingV = 'right';
-            else if (e.target.closest('#video-trim-overlay')) {
+            
+            if (e.target.id === 'v-handle-l') {
+                isDraggingV = 'left';
+            } else if (e.target.id === 'v-handle-r') {
+                isDraggingV = 'right';
+            } else if (e.target.closest('#video-trim-overlay')) {
                 isDraggingV = 'center';
                 dragOffsetV = clickTime - vStart;
+            } else {
+                video.currentTime = clickTime;
+                if (audio.src) {
+                    const offset = clickTime - vStart;
+                    audio.currentTime = Math.max(0, aStart + offset);
+                }
             }
         };
 
@@ -540,8 +581,29 @@
             if (audioDuration === 0) return;
             const rect = aTrimmerTrack.getBoundingClientRect();
             const clickTime = ((e.clientX - rect.left) / rect.width) * audioDuration;
-            isDraggingA = true;
-            dragOffsetA = clickTime - aStart;
+            
+            // Se clicco dentro l'overlay viola esistente, inizio il trascinamento
+            if (e.target.closest('#audio-trim-overlay')) {
+                isDraggingA = true;
+                dragOffsetA = clickTime - aStart;
+            } else {
+                // Se clicco FUORI dall'overlay, sposto l'overlay in quel punto
+                const currentVidDur = vEnd - vStart;
+                
+                // Cerchiamo di centrare il range sul punto del click o di farlo partire da lì
+                let newAStart = clickTime - (currentVidDur / 2);
+                
+                // Vincoli di durata
+                if (newAStart < 0) newAStart = 0;
+                if (newAStart + currentVidDur > audioDuration) newAStart = audioDuration - currentVidDur;
+                
+                aStart = newAStart;
+                updateTrimmers();
+                
+                // Spostiamo anche la testina di riproduzione all'inizio del nuovo range per feedback immediato
+                audio.currentTime = aStart;
+                video.currentTime = vStart;
+            }
         };
 
         window.onmousemove = (e) => {
