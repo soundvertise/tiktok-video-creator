@@ -168,7 +168,7 @@ video{width:100%;height:100%;object-fit:cover;display:block;transition:transform
     <!-- Preview controls -->
     <div class="flex gap-2 w-[290px]">
       <button id="toggle-guide" class="flex-1 px-4 py-2 bg-zinc-900 rounded-full text-[9px] font-black uppercase border border-zinc-800 hover:border-blue-500 transition-all text-zinc-400 hover:text-white">TikTok UI</button>
-      <button id="toggle-watermark" class="toggle-btn active text-[9px] px-3 py-2"><i data-lucide="zoom-out" class="w-3 h-3"></i>VEO</button>
+      <button id="toggle-watermark" class="toggle-btn text-[9px] px-3 py-2"><i data-lucide="zoom-in" class="w-3 h-3"></i>VEO</button>
       <button id="toggle-spotify" class="toggle-btn text-[9px] px-3 py-2" style="background:#111;border-color:#333;color:#666;"><i data-lucide="music-2" class="w-3 h-3"></i>Spotify</button>
     </div>
 
@@ -276,6 +276,7 @@ video{width:100%;height:100%;object-fit:cover;display:block;transition:transform
         <button class="caption-cat-btn" data-category="sad">SAD</button>
         <button class="caption-cat-btn" data-category="adrenaline">⚡ ADRENALINE</button>
         <button class="caption-cat-btn" data-category="relax">🌿 RELAX</button>
+        <button class="caption-cat-btn" data-category="party">🎉 PARTY</button>
       </div>
     </div>
 
@@ -352,7 +353,7 @@ const video=document.getElementById('main-video'),
 // ── State ──
 let videoFile,audioFile,videoDuration=0,audioDuration=0,vStart=0,vEnd=15,aStart=0;
 const MAX_DUR=30;
-let outlineEnabled=true,removeWatermark=true,noCaptions=false;
+let outlineEnabled=true,removeWatermark=false,noCaptions=false;
 let isDraggingV=null,isDraggingA=false,dragOffsetV=0,dragOffsetA=0;
 let videoLibrary=[],audioLibrary=[],currentVideoIndex=0,currentAudioIndex=-1;
 const MAX_QUEUE_SIZE=100;
@@ -361,8 +362,8 @@ const waveformCache={};
 let selectedCategory='urban';
 const shuffleQueues={};
 
-// VEO default ON
-video.style.transform='scale(1.1)';
+// VEO default OFF
+video.style.transform='scale(1)';
 
 // ── Utility ──
 function notify(msg,color='green'){
@@ -573,9 +574,7 @@ function loadVideoFromLibrary(index){
   if(index<0||index>=videoLibrary.length)return;
   currentVideoIndex=index;videoFile=videoLibrary[index];
   video.src=URL.createObjectURL(videoFile);
-  video.style.transform='scale(1.1)';removeWatermark=true;
-  const wb=document.getElementById('toggle-watermark');
-  wb.classList.add('active');wb.innerHTML='<i data-lucide="zoom-out" class="w-3 h-3"></i>VEO';lucide.createIcons();
+  applyWatermarkState();
   video.onloadedmetadata=()=>{videoDuration=video.duration;vStart=0;vEnd=Math.min(videoDuration,15);updateTrimmers();video.currentTime=vStart;};
   generateThumbnails(videoFile);
 }
@@ -599,11 +598,15 @@ function loadAudioFromSelector(){
 }
 
 // ── VEO watermark toggle ──
+function applyWatermarkState(){
+  const wb=document.getElementById('toggle-watermark');
+  if(removeWatermark){video.style.transform='scale(1.1)';wb.classList.add('active');wb.innerHTML='<i data-lucide="zoom-out" class="w-3 h-3"></i>VEO';}
+  else{video.style.transform='scale(1)';wb.classList.remove('active');wb.innerHTML='<i data-lucide="zoom-in" class="w-3 h-3"></i>VEO';}
+  lucide.createIcons();
+}
 document.getElementById('toggle-watermark').onclick=function(){
   removeWatermark=!removeWatermark;this.classList.toggle('active');
-  if(removeWatermark){video.style.transform='scale(1.1)';this.innerHTML='<i data-lucide="zoom-out" class="w-3 h-3"></i>VEO';}
-  else{video.style.transform='scale(1)';this.innerHTML='<i data-lucide="zoom-in" class="w-3 h-3"></i>VEO';}
-  lucide.createIcons();markChanged();
+  applyWatermarkState();markChanged();
 };
 
 // ── Trimmer sync ──
@@ -872,7 +875,7 @@ function loadQueueItem(index){
   const ncBtn=document.getElementById('no-caption-btn');
   ncBtn.classList.toggle('active',noCaptions);
   caption.style.opacity=noCaptions?'0.25':'1';
-  removeWatermark=item.removeWatermark!==undefined?item.removeWatermark:true;
+  removeWatermark=item.removeWatermark!==undefined?item.removeWatermark:false;
   const wb=document.getElementById('toggle-watermark');
   if(removeWatermark){video.style.transform='scale(1.1)';wb.classList.add('active');wb.innerHTML='<i data-lucide="zoom-out" class="w-3 h-3"></i>VEO';}
   else{video.style.transform='scale(1)';wb.classList.remove('active');wb.innerHTML='<i data-lucide="zoom-in" class="w-3 h-3"></i>VEO';}
@@ -941,7 +944,7 @@ document.getElementById('auto-queue-btn').onclick=async()=>{
     currentVideoIndex=i;videoFile=videoLibrary[i];
     video.src=URL.createObjectURL(videoFile);
     await new Promise(r=>{video.onloadedmetadata=()=>{videoDuration=video.duration;vStart=0;vEnd=Math.min(videoDuration,15);updateTrimmers();r();};});
-    removeWatermark=true;video.style.transform='scale(1.1)';
+    applyWatermarkState();
     if(audioLibrary.length>0){
       const audioIdx=i%audioLibrary.length;
       audioFile=audioLibrary[audioIdx];currentAudioIndex=audioIdx;
@@ -1334,7 +1337,60 @@ const viralCaptions={
 'This sound was made for rainy days',
 'How is your week going so far be honest',
 'Just pure comfort in a 15 second clip',
-'If you are reading this I hope you have a great day',
+    'If you are reading this I hope you have a great day',
+  ],
+  party:[
+    'the moment the beat dropped and everyone forgot how to be shy',
+    'no thoughts just dancing until the sun comes up',
+    'pov: we got the whole place moving',
+    'the dance circle is the only meeting i attend on time',
+    'certified floor filler incoming',
+    'if your feet are not moving you are in the wrong spot',
+    'the song came on and the room changed instantly',
+    'we do not need a reason to dance but tonight is a great one',
+    'vibes so good even the furniture started moving',
+    'the group chat said dress code is fun and no exceptions',
+    'some nights you just have to dance like nobody is filming (we are filming)',
+    'this playlist was scientifically designed to make you move',
+    'the birthday candle theory is fake. the dance circle is real.',
+    'energy in the room: unmatched',
+    'we came, we danced, we left our mark on the dancefloor',
+    'the only rule tonight is keep the vibes high',
+    'choreography? no. confidence? yes.',
+    'watch me embarrass myself on camera for the plot',
+    'the beat does not wait for you to be ready. neither do we.',
+    'if this song plays and you are still sitting, we have a problem',
+    'graduated from awkward shuffle to main character energy',
+    'this is your sign to stand up and start moving',
+    'the party does not start until the right song does',
+    'drop everything and dance with me right now',
+    'someone tell my legs to stop moving (dont)',
+    'the moment they started the countdown and i lost all coordination',
+    'dancing is the best cardio and i have the receipts',
+    'we turned this place upside down in the best way',
+    'the flash on, the beat on, the problems off',
+    'if you cannot feel this beat check your pulse',
+    'three songs in and we are already out of breath',
+    'this is what happens when the playlist hits different',
+    'me and the whole squad catching the same rhythm',
+    'the camera cannot capture how good this feels',
+    'turn the volume up and the worries down',
+    'proving that joy looks best in motion',
+    'the dance floor is calling and i must go',
+    'no such thing as too late to start dancing',
+    'the best therapy is a loud song and a crowded floor',
+    'we came to make memories and lose our voices',
+    'the encore we did not know we needed',
+    'hands up if you can feel this one in your chest',
+    'the kind of night that does not need a caption (but here we are)',
+    'if dancing is wrong i do not want to be right',
+    'the beat hit and suddenly everyone knew the assignment',
+    'lights low and the energy high',
+    'we do not just dance. we narrate the night with our moves.',
+    'the last song of the night hits different when the whole room sings',
+    'confidence level: dancing in public',
+    'some memories are too big for a phone screen. this is one of them.',
+    'the moment everyone stopped filming and just lived it',
   ],
   pov:[
     'pov: you finally stopped waiting for permission',
